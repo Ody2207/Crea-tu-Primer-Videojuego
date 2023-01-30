@@ -6,6 +6,8 @@ const btnLeft = document.querySelector('#left');
 const btnRight = document.querySelector('#right');
 const spanLives = document.querySelector('#lives');
 const spanTime = document.querySelector('#time');
+const spanRecord = document.querySelector('#record');
+const pResult = document.querySelector('#result');
 
 
 let canvasSize;
@@ -59,6 +61,7 @@ function startGame() {
 	if (!timeStart) {
 		timeStart = Date.now();
 		timeInterval = setInterval(showTime, 100)
+		showRecord();
 	}
 
 	showLives();
@@ -121,7 +124,6 @@ function movePlayer() {
 }
 
 function levelWin() {
-	console.log('HOliii');
 	level ++;
 	startGame();
 };
@@ -139,8 +141,26 @@ function levelFail() {
 	startGame();
 };
 function gameWin() {
-	console.log('Felicidades negro ganaste!');
+	console.log('Felicidades ganaste!');
 	clearInterval(timeInterval);
+
+	const playerTime = Date.now() - timeStart;
+	const recordTime = localStorage.getItem('record_time');
+	
+	if (recordTime) {	
+		if (recordTime >= playerTime) {
+			localStorage.setItem('record_time', playerTime);
+			pResult.innerHTML = 'SUPERASTE EL RECORD';
+		} else {
+			localStorage.setItem('record_time', playerTime);
+			pResult.innerHTML = 'lo siento no superaste el record :(';
+		}
+	} else {
+		localStorage.setItem('record_time', playerTime);
+		pResult.innerHTML = 'Primera vez? jaja, muy bien';
+	};
+
+	console.log(recordTime, playerTime);
 };
 function showLives() {
 	const heartArray = Array(lives).fill(emojis['HEART']);
@@ -149,6 +169,9 @@ function showLives() {
 };
 function showTime() {
 	spanTime.innerHTML = Date.now() - timeStart;
+};
+function showRecord() {
+	spanRecord.innerHTML = localStorage.getItem('record_time');
 };
 
 window.addEventListener('keydown', moveByKeys);
